@@ -11,82 +11,70 @@ import {
   Calendar,
   Users,
   ArrowUpRight,
-  Bot
+  Bot,
+  RefreshCw
 } from 'lucide-react';
 import dashboardHero from '../assets/dashboard-hero.jpg';
-
-const summaryCards = [
-  {
-    title: 'Pending Tasks',
-    value: '12',
-    description: 'Need attention',
-    icon: Clock,
-    trend: '+2 from yesterday',
-    color: 'text-warning'
-  },
-  {
-    title: 'Expense Summary',
-    value: '₹1,24,500',
-    description: 'This month',
-    icon: DollarSign,
-    trend: '+12% from last month',
-    color: 'text-success'
-  },
-  {
-    title: 'Documents Processed',
-    value: '48',
-    description: 'This week',
-    icon: FileText,
-    trend: '+8 new documents',
-    color: 'text-primary'
-  },
-  {
-    title: 'Automations Active',
-    value: '6',
-    description: 'Running smoothly',
-    icon: Bot,
-    trend: '2 new this week',
-    color: 'text-secondary'
-  }
-];
-
-const recentDocuments = [
-  { name: 'Invoice_ABC_Corp_2024.pdf', type: 'Invoice', amount: '₹45,000', status: 'processed', date: '2 hours ago' },
-  { name: 'Receipt_Office_Supplies.jpg', type: 'Receipt', amount: '₹2,500', status: 'pending', date: '4 hours ago' },
-  { name: 'Contract_XYZ_Ltd.pdf', type: 'Contract', amount: '₹1,20,000', status: 'processed', date: '1 day ago' },
-  { name: 'Expense_Travel_Mumbai.pdf', type: 'Expense', amount: '₹8,500', status: 'pending', date: '2 days ago' }
-];
-
-const notifications = [
-  { 
-    id: 1, 
-    title: 'New invoice from ABC Corp requires approval', 
-    time: '5 minutes ago', 
-    type: 'urgent',
-    icon: AlertCircle 
-  },
-  { 
-    id: 2, 
-    title: 'Monthly expense report is ready for review', 
-    time: '2 hours ago', 
-    type: 'info',
-    icon: FileText 
-  },
-  { 
-    id: 3, 
-    title: 'Successfully automated 15 email responses', 
-    time: '1 day ago', 
-    type: 'success',
-    icon: CheckCircle2 
-  }
-];
+import { useBusinessData } from '../hooks/useBusinessData';
+import { useAuth } from '../hooks/useAuth';
+import { useState } from 'react';
 
 interface DashboardProps {
   onRouteChange?: (route: string) => void;
 }
 
 export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
-  const userName = localStorage.getItem('userName') || 'User';
+  const { user } = useAuth();
+  const { metrics, documents, unreadNotifications, markNotificationRead } = useBusinessData();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  const userName = user?.name || 'User';
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setIsRefreshing(false);
+  };
+
+  const summaryCards = [
+    {
+      title: 'Pending Tasks',
+      value: metrics.pendingTasks.toString(),
+      description: 'Need attention',
+      icon: Clock,
+      trend: '+2 from yesterday',
+      color: 'text-warning',
+      onClick: () => onRouteChange?.('tasks')
+    },
+    {
+      title: 'Expense Summary',
+      value: `₹${metrics.expenseTotal.toLocaleString()}`,
+      description: 'This month',
+      icon: DollarSign,
+      trend: '+12% from last month',
+      color: 'text-success',
+      onClick: () => onRouteChange?.('expenses')
+    },
+    {
+      title: 'Documents Processed',
+      value: metrics.documentsProcessed.toString(),
+      description: 'This week',
+      icon: FileText,
+      trend: '+8 new documents',
+      color: 'text-primary',
+      onClick: () => onRouteChange?.('documents')
+    },
+    {
+      title: 'Automations Active',
+      value: metrics.activeAutomations.toString(),
+      description: 'Running smoothly',
+      icon: Bot,
+      trend: '2 new this week',
+      color: 'text-secondary',
+      onClick: () => onRouteChange?.('automation')
+    }
+  ];
 
   const handleQuickAction = (action: string) => {
     switch (action) {
@@ -107,6 +95,16 @@ export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
     }
   };
 
+  const handleNotificationClick = (notification: any) => {
+    markNotificationRead(notification.id);
+    // Route based on notification type
+    if (notification.title.includes('invoice')) {
+      onRouteChange?.('documents');
+    } else if (notification.title.includes('report')) {
+      onRouteChange?.('expenses');
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Hero Section */}
@@ -124,15 +122,29 @@ export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
             <p className="text-white/90 india-responsive">
               Your business automation hub is working efficiently today
             </p>
+            <p className="text-white/70 text-sm mt-1">
+              Last updated: {new Date(metrics.lastUpdated).toLocaleTimeString()}
+            </p>
           </div>
-          <Button 
-            variant="secondary" 
-            className="hidden md:flex gap-2"
-            onClick={() => alert('Analytics dashboard coming soon!')}
-          >
-            <TrendingUp className="w-4 h-4" />
-            View Analytics
-          </Button>
+          <div className="hidden md:flex gap-2">
+            <Button 
+              variant="secondary" 
+              className="gap-2"
+              onClick={() => alert('Analytics dashboard coming soon!')}
+            >
+              <TrendingUp className="w-4 h-4" />
+              View Analytics
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -141,7 +153,11 @@ export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
         {summaryCards.map((card, index) => {
           const Icon = card.icon;
           return (
-            <Card key={index} className="modern-card hover:scale-105 transition-transform duration-300">
+            <Card 
+              key={index} 
+              className="modern-card hover:scale-105 transition-transform duration-300 cursor-pointer"
+              onClick={card.onClick}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center`}>
@@ -182,8 +198,12 @@ export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentDocuments.map((doc, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors duration-200">
+              {documents.slice(0, 4).map((doc, index) => (
+                <div 
+                  key={doc.id} 
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors duration-200 cursor-pointer"
+                  onClick={() => onRouteChange?.('documents')}
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                       <FileText className="w-5 h-5 text-primary" />
@@ -199,7 +219,7 @@ export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
                   <div className="text-right">
                     <p className="font-semibold text-sm">{doc.amount}</p>
                     <Badge 
-                      variant={doc.status === 'processed' ? 'default' : 'secondary'}
+                      variant={doc.status === 'processed' ? 'default' : doc.status === 'error' ? 'destructive' : 'secondary'}
                       className="text-xs"
                     >
                       {doc.status}
@@ -221,12 +241,24 @@ export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {notifications.map((notification) => {
-                const Icon = notification.icon;
+              {unreadNotifications.slice(0, 3).map((notification) => {
+                const getIcon = (type: string) => {
+                  switch (type) {
+                    case 'warning': return AlertCircle;
+                    case 'success': return CheckCircle2;
+                    default: return FileText;
+                  }
+                };
+                const Icon = getIcon(notification.type);
+                
                 return (
-                  <div key={notification.id} className="flex gap-3 p-3 rounded-lg hover:bg-accent transition-colors duration-200">
+                  <div 
+                    key={notification.id} 
+                    className="flex gap-3 p-3 rounded-lg hover:bg-accent transition-colors duration-200 cursor-pointer"
+                    onClick={() => handleNotificationClick(notification)}
+                  >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      notification.type === 'urgent' ? 'bg-destructive/10 text-destructive' :
+                      notification.type === 'warning' ? 'bg-destructive/10 text-destructive' :
                       notification.type === 'success' ? 'bg-success/10 text-success' :
                       'bg-primary/10 text-primary'
                     }`}>
@@ -234,7 +266,12 @@ export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium mb-1">{notification.title}</p>
-                      <p className="text-xs text-muted-foreground">{notification.time}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(notification.timestamp).toLocaleTimeString()} ago
+                      </p>
+                      {!notification.read && (
+                        <div className="w-2 h-2 bg-primary rounded-full mt-1"></div>
+                      )}
                     </div>
                   </div>
                 );

@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator
 } from './ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
+import { useBusinessData } from '../hooks/useBusinessData';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -23,9 +24,9 @@ interface HeaderProps {
 
 export const Header = ({ onMenuClick }: HeaderProps) => {
   const [language, setLanguage] = useState('en');
-  const [notifications] = useState(3);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { unreadNotifications } = useBusinessData();
   
   const userName = localStorage.getItem('userName') || 'User';
 
@@ -100,12 +101,12 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
           variant="ghost" 
           size="sm" 
           className="relative"
-          onClick={() => alert(`You have ${notifications} new notifications`)}
+          onClick={() => alert(`You have ${unreadNotifications.length} unread notifications`)}
         >
           <Bell className="w-4 h-4" />
-          {notifications > 0 && (
+          {unreadNotifications.length > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
-              {notifications}
+              {unreadNotifications.length}
             </span>
           )}
         </Button>

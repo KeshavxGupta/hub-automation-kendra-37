@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { useToast } from '../hooks/use-toast';
+import { useBusinessData } from '../hooks/useBusinessData';
 
 interface ExtractedField {
   label: string;
@@ -25,6 +26,7 @@ export const DocumentUpload = () => {
   const [dragOver, setDragOver] = useState(false);
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const { toast } = useToast();
+  const { addDocument } = useBusinessData();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -85,6 +87,15 @@ export const DocumentUpload = () => {
           ? { ...f, status: 'completed', documentType, extractedFields }
           : f
       ));
+
+      // Add to business data
+      addDocument({
+        name: file.name,
+        type: documentType,
+        amount: extractedFields.find(f => f.label.includes('Amount'))?.value || 'N/A',
+        status: 'processed',
+        date: 'Just now'
+      });
 
       toast({
         title: "Document Processed",

@@ -4,15 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Bot, Eye, EyeOff } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -21,16 +23,20 @@ const Login = () => {
       return;
     }
     
-    // Simulate authentication
-    console.log('Login attempt:', { email, password });
+    setIsLoading(true);
     
-    // Store user session (simple localStorage for demo)
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('userEmail', email);
-    localStorage.setItem('userName', email.split('@')[0]);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Navigate to dashboard
-    navigate('/dashboard');
+    try {
+      // Extract name from email or use default
+      const name = email.includes('@') ? email.split('@')[0] : 'User';
+      login(email, name);
+    } catch (error) {
+      alert('Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -107,8 +113,15 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full">
-                Sign In
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </Button>
             </form>
 
@@ -132,8 +145,9 @@ const Login = () => {
               </p>
               <Button
                 variant="outline"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => login('demo@example.com', 'Demo User')}
                 className="w-full"
+                disabled={isLoading}
               >
                 Continue with Demo Account
               </Button>
