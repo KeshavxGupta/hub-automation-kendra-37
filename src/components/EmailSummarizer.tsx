@@ -127,7 +127,11 @@ export const EmailSummarizer = () => {
             AI-powered email analysis with automatic action item extraction
           </p>
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button 
+          variant="outline" 
+          className="gap-2"
+          onClick={() => alert('AI configuration panel coming soon!')}
+        >
           <Brain className="w-4 h-4" />
           AI Settings
         </Button>
@@ -239,7 +243,17 @@ export const EmailSummarizer = () => {
                         <div key={index} className="flex items-start gap-2 p-2 bg-muted/50 rounded-lg">
                           <Clock className="w-4 h-4 text-warning mt-0.5 flex-shrink-0" />
                           <span className="text-sm flex-1">{item}</span>
-                          <Button variant="ghost" size="sm" className="text-xs">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-xs"
+                            onClick={() => {
+                              toast({
+                                title: "Task Created",
+                                description: `Added "${item}" to your task list`,
+                              });
+                            }}
+                          >
                             Create Task
                           </Button>
                         </div>
@@ -280,7 +294,15 @@ export const EmailSummarizer = () => {
                             </div>
                           </div>
                         </div>
-                        <Button className="mt-3 w-full md:w-auto">
+                        <Button 
+                          className="mt-3 w-full md:w-auto"
+                          onClick={() => {
+                            toast({
+                              title: "Calendar Event Created",
+                              description: `Meeting scheduled for ${email.meetingDetails?.date}`,
+                            });
+                          }}
+                        >
                           Add to Calendar
                         </Button>
                       </div>
@@ -289,12 +311,30 @@ export const EmailSummarizer = () => {
 
                   {/* Actions */}
                   <div className="flex gap-2 pt-2 border-t border-border">
-                    <Button className="gap-2">
+                    <Button 
+                      className="gap-2"
+                      onClick={() => {
+                        toast({
+                          title: "Automation Created",
+                          description: "Email processing automation has been set up",
+                        });
+                      }}
+                    >
                       <CheckCircle2 className="w-4 h-4" />
                       Create Automation
                     </Button>
-                    <Button variant="outline">Export Summary</Button>
-                    <Button variant="outline">Share Analysis</Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => alert('Export functionality coming soon!')}
+                    >
+                      Export Summary
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => alert('Share functionality coming soon!')}
+                    >
+                      Share Analysis
+                    </Button>
                   </div>
                 </div>
               </CardContent>

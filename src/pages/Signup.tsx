@@ -20,16 +20,31 @@ const Signup = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement registration logic
-    console.log('Signup attempt:', formData);
     
-    // Basic validation
+    // Validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match');
       return;
     }
     
-    // For now, just navigate to dashboard
+    if (formData.password.length < 6) {
+      alert('Password must be at least 6 characters');
+      return;
+    }
+    
+    console.log('Signup attempt:', formData);
+    
+    // Store user session
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userEmail', formData.email);
+    localStorage.setItem('userName', `${formData.firstName} ${formData.lastName}`);
+    
+    // Navigate to dashboard
     navigate('/dashboard');
   };
 

@@ -81,7 +81,32 @@ const notifications = [
   }
 ];
 
-export const Dashboard = () => {
+interface DashboardProps {
+  onRouteChange?: (route: string) => void;
+}
+
+export const Dashboard = ({ onRouteChange }: DashboardProps = {}) => {
+  const userName = localStorage.getItem('userName') || 'User';
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'upload':
+        onRouteChange?.('documents');
+        break;
+      case 'automation':
+        onRouteChange?.('automation');
+        break;
+      case 'meeting':
+        alert('Calendar integration coming soon!');
+        break;
+      case 'team':
+        alert('Team collaboration features coming soon!');
+        break;
+      default:
+        alert('Feature coming soon!');
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Hero Section */}
@@ -94,13 +119,17 @@ export const Dashboard = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90 flex items-center justify-between p-6">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              Welcome back, Rajesh! 👋
+              Welcome back, {userName}! 👋
             </h1>
             <p className="text-white/90 india-responsive">
               Your business automation hub is working efficiently today
             </p>
           </div>
-          <Button variant="secondary" className="hidden md:flex gap-2">
+          <Button 
+            variant="secondary" 
+            className="hidden md:flex gap-2"
+            onClick={() => alert('Analytics dashboard coming soon!')}
+          >
             <TrendingUp className="w-4 h-4" />
             View Analytics
           </Button>
@@ -142,7 +171,13 @@ export const Dashboard = () => {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">Recent Documents</CardTitle>
-              <Button variant="ghost" size="sm">View All</Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => alert('Document viewer coming soon!')}
+              >
+                View All
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -205,7 +240,12 @@ export const Dashboard = () => {
                 );
               })}
             </div>
-            <Button variant="outline" className="w-full mt-4" size="sm">
+            <Button 
+              variant="outline" 
+              className="w-full mt-4" 
+              size="sm"
+              onClick={() => alert('Full notifications panel coming soon!')}
+            >
               View All Notifications
             </Button>
           </CardContent>
@@ -219,19 +259,34 @@ export const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Button className="h-20 flex-col gap-2 bg-gradient-primary hover:opacity-90">
+            <Button 
+              className="h-20 flex-col gap-2 bg-gradient-primary hover:opacity-90"
+              onClick={() => handleQuickAction('upload')}
+            >
               <FileText className="w-6 h-6" />
               <span className="text-sm">Upload Document</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => handleQuickAction('automation')}
+            >
               <Bot className="w-6 h-6" />
               <span className="text-sm">Create Automation</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => handleQuickAction('meeting')}
+            >
               <Calendar className="w-6 h-6" />
               <span className="text-sm">Schedule Meeting</span>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
+            <Button 
+              variant="outline" 
+              className="h-20 flex-col gap-2"
+              onClick={() => handleQuickAction('team')}
+            >
               <Users className="w-6 h-6" />
               <span className="text-sm">Team Collaboration</span>
             </Button>

@@ -14,9 +14,22 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication logic
+    
+    // Basic validation
+    if (!email || !password) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    // Simulate authentication
     console.log('Login attempt:', { email, password });
-    // For now, just navigate to dashboard
+    
+    // Store user session (simple localStorage for demo)
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userEmail', email);
+    localStorage.setItem('userName', email.split('@')[0]);
+    
+    // Navigate to dashboard
     navigate('/dashboard');
   };
 

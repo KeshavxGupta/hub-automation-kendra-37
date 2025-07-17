@@ -5,12 +5,13 @@ import { AutomationBuilder } from './AutomationBuilder';
 
 interface RouterProps {
   activeRoute: string;
+  onRouteChange?: (route: string) => void;
 }
 
-export const Router = ({ activeRoute }: RouterProps) => {
+export const Router = ({ activeRoute, onRouteChange }: RouterProps) => {
   switch (activeRoute) {
     case 'dashboard':
-      return <Dashboard />;
+      return <Dashboard onRouteChange={onRouteChange} />;
     case 'documents':
       return <DocumentUpload />;
     case 'email':

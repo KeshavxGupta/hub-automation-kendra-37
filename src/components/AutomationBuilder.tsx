@@ -233,7 +233,11 @@ export const AutomationBuilder = () => {
                           {flow.description}
                         </p>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => alert(`Configuring ${flow.name}`)}
+                      >
                         <Settings className="w-4 h-4" />
                       </Button>
                     </div>
@@ -268,10 +272,18 @@ export const AutomationBuilder = () => {
                           </span>
                         </div>
                         <div className="flex gap-2">
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => alert(`Running ${flow.name} test`)}
+                          >
                             <Play className="w-3 h-3" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => setBuildMode(true)}
+                          >
                             <Edit3 className="w-3 h-3" />
                           </Button>
                         </div>
@@ -302,7 +314,15 @@ export const AutomationBuilder = () => {
                       <p className="text-sm text-muted-foreground india-responsive">
                         {template.description}
                       </p>
-                      <Button variant="outline" size="sm" className="mt-4 w-full">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="mt-4 w-full"
+                        onClick={() => {
+                          setBuildMode(true);
+                          alert(`Loading ${template.name} template`);
+                        }}
+                      >
                         Use Template
                       </Button>
                     </CardContent>
@@ -400,8 +420,19 @@ export const AutomationBuilder = () => {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base">Workflow Canvas</CardTitle>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">Test Flow</Button>
-                  <Button size="sm">Save Flow</Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => alert('Testing automation flow...')}
+                  >
+                    Test Flow
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => alert('Flow saved successfully!')}
+                  >
+                    Save Flow
+                  </Button>
                 </div>
               </div>
             </CardHeader>

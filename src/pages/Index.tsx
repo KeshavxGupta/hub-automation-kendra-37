@@ -11,7 +11,7 @@ const Index = () => {
 
   return (
     <Layout activeRoute={activeRoute} onRouteChange={handleRouteChange}>
-      <Router activeRoute={activeRoute} />
+      <Router activeRoute={activeRoute} onRouteChange={handleRouteChange} />
     </Layout>
   );
 };

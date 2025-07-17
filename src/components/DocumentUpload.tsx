@@ -128,7 +128,10 @@ export const DocumentUpload = () => {
             Upload documents for AI-powered data extraction and smart routing
           </p>
         </div>
-        <Button className="gap-2">
+        <Button 
+          className="gap-2"
+          onClick={() => alert('Document templates coming soon!')}
+        >
           <FileText className="w-4 h-4" />
           View Templates
         </Button>
@@ -207,7 +210,11 @@ export const DocumentUpload = () => {
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => alert(`Viewing ${file.name}`)}
+                  >
                     <Eye className="w-4 h-4" />
                   </Button>
                 </div>
@@ -255,12 +262,35 @@ export const DocumentUpload = () => {
 
                     {/* Action Buttons */}
                     <div className="flex gap-2 pt-2">
-                      <Button className="gap-2">
+                      <Button 
+                        className="gap-2"
+                        onClick={() => {
+                          toast({
+                            title: "Automation Applied",
+                            description: `Processing ${file.name} with automation rules`,
+                          });
+                        }}
+                      >
                         <Send className="w-4 h-4" />
                         Apply Automation
                       </Button>
-                      <Button variant="outline">Edit Fields</Button>
-                      <Button variant="outline">Save Template</Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => alert('Field editor coming soon!')}
+                      >
+                        Edit Fields
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          toast({
+                            title: "Template Saved",
+                            description: `Saved ${file.documentType} template`,
+                          });
+                        }}
+                      >
+                        Save Template
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
